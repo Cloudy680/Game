@@ -14,18 +14,23 @@ def run_game(level_number):
     window = pygame.display.set_mode((WIDTH, HEIGHT))
     clock = pygame.time.Clock()
 
+
     try:
         img_key = pygame.image.load("D:\Игра ПУ\images\key.png")
         img_key_door = pygame.image.load("D:\Игра ПУ\images\key_door.png")
         img_floor = pygame.image.load("D:\Игра ПУ\images\_another_floor.png")
         img_plate_act = pygame.image.load("D:\Игра ПУ\images\_another_floor1.png")
-        img_player = pygame.image.load("D:\Игра ПУ\images\player.gif")
+        # img_player = pygame.image.load("D:\Игра ПУ\images\player.png")
+        img_player_left = pygame.image.load("D:\Игра ПУ\images\player_left.png")
+        img_player_right = pygame.image.load("D:\Игра ПУ\images\player_right.png")
+        img_player_up = pygame.image.load("D:\Игра ПУ\images\player_up.png")
+        img_player_down = pygame.image.load("D:\Игра ПУ\images\player_down.png")
         img_wall_up = pygame.image.load("D:\Игра ПУ\images\wall_up.png")
     except:
         print("Не удалось загрузить изображение")
 
     img_key = pygame.transform.scale(img_key, (cell_SIZE // 2, cell_SIZE // 2))
-    img_player = pygame.transform.scale(img_player, (cell_SIZE // 2, cell_SIZE // 2))
+    # img_player = pygame.transform.scale(img_player, (cell_SIZE // 2, cell_SIZE // 2))
     img_key_door = pygame.transform.scale(img_key_door, (cell_SIZE, cell_SIZE))
     img_wall_up = pygame.transform.scale(img_wall_up, (cell_SIZE, cell_SIZE))
     img_floor = pygame.transform.scale(img_floor, (cell_SIZE, cell_SIZE))
@@ -98,28 +103,19 @@ def run_game(level_number):
                 return 0
 
             # Реализация движения персонажа
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_a and player.Is_moving() == False:
-                timer = 0
-                X_def = player.hitbox.x
-                key_left_pressed = True
-                timer = DELAY
-                player.Change_moving(True)
-            elif event.type == pygame.KEYDOWN and event.key == pygame.K_d and player.Is_moving() == False:
-                timer = 0
-                X_def = player.hitbox.x
-                key_right_pressed = True
-                timer = DELAY
-                player.Change_moving(True)
-            elif event.type == pygame.KEYDOWN and event.key == pygame.K_w and player.Is_moving() == False:
-                timer = 0
-                Y_def = player.hitbox.y
-                key_up_pressed = True
-                timer = DELAY
-                player.Change_moving(True)
-            elif event.type == pygame.KEYDOWN and event.key == pygame.K_s and player.Is_moving() == False:
-                timer = 0
-                Y_def = player.hitbox.y
-                key_down_pressed = True
+            if event.type == pygame.KEYDOWN  and player.Is_moving() == False:
+                if event.key == pygame.K_a or event.key == pygame.K_LEFT:
+                    X_def = player.hitbox.x
+                    key_left_pressed = True
+                elif event.key == pygame.K_d or event.key == pygame.K_RIGHT:
+                    X_def = player.hitbox.x
+                    key_right_pressed = True
+                elif event.key == pygame.K_w or event.key == pygame.K_UP:
+                    Y_def = player.hitbox.y
+                    key_up_pressed = True
+                elif event.key == pygame.K_s or event.key == pygame.K_DOWN:
+                    Y_def = player.hitbox.y
+                    key_down_pressed = True
                 timer = DELAY
                 player.Change_moving(True)
 
@@ -141,24 +137,18 @@ def run_game(level_number):
         elif state == "play":
             if key_left_pressed:
                 timer = player.X_move(timer, cell_SIZE, game_map, X_def, -PLAYER_SPEED)
-                if timer == 0:
-                    key_left_pressed = False
-                    player.Change_moving(False)
             if key_right_pressed:
                 timer = player.X_move(timer, cell_SIZE, game_map, X_def, PLAYER_SPEED)
-                if timer == 0:
-                    key_right_pressed = False
-                    player.Change_moving(False)
             if key_up_pressed:
                 timer = player.Y_move(timer, cell_SIZE, game_map, Y_def, -PLAYER_SPEED)
-                if timer == 0:
-                    key_up_pressed = False
-                    player.Change_moving(False)
             if key_down_pressed:
                 timer = player.Y_move(timer, cell_SIZE, game_map, Y_def, PLAYER_SPEED)
-                if timer == 0:
-                    key_down_pressed = False
-                    player.Change_moving(False)
+            if timer == 0:
+                key_left_pressed = False
+                key_right_pressed = False
+                key_up_pressed = False
+                key_down_pressed = False
+                player.Change_moving(False)
 
         # Отрисовка карты и работоспособность особых ячеек
         for i in range(game_map_HEIGHT):
@@ -185,8 +175,8 @@ def run_game(level_number):
                         Bullet(x + cell_SIZE // 2, y + cell_SIZE // 2, 10, direction, BULLET_SPEED)
                         trap_1 = False
                         trap_1_timer = BULLET_CD
-                    # pygame.draw.rect(window, pygame.Color("red"), (x, y, cell_SIZE, cell_SIZE))
-                    window.blit(img_wall_up, (x, y, cell_SIZE, cell_SIZE))
+                    pygame.draw.rect(window, pygame.Color("red"), (x, y, cell_SIZE, cell_SIZE))
+                    # window.blit(img_wall_up, (x, y, cell_SIZE, cell_SIZE))
                 elif game_map[i][j] == 12:
                     if trap_2 and trap_2_timer == 0:
                         plate_row, plate_col = find_plate_pos(game_map, 12)
@@ -194,8 +184,8 @@ def run_game(level_number):
                         Bullet(x + cell_SIZE // 2, y + cell_SIZE // 2, 10, direction, BULLET_SPEED)
                         trap_2 = False
                         trap_2_timer = BULLET_CD
-                    # pygame.draw.rect(window, pygame.Color("red"), (x, y, cell_SIZE, cell_SIZE))
-                    window.blit(img_wall_up, (x, y, cell_SIZE, cell_SIZE))
+                    pygame.draw.rect(window, pygame.Color("red"), (x, y, cell_SIZE, cell_SIZE))
+                    # window.blit(img_wall_up, (x, y, cell_SIZE, cell_SIZE))
                 elif game_map[i][j] == 14:
                     if trap_3 and trap_3_timer == 0:
                         plate_row, plate_col = find_plate_pos(game_map, 14)
@@ -203,8 +193,8 @@ def run_game(level_number):
                         Bullet(x + cell_SIZE // 2, y + cell_SIZE // 2, 10, direction, BULLET_SPEED)
                         trap_3 = False
                         trap_3_timer = BULLET_CD
-                    # pygame.draw.rect(window, pygame.Color("red"), (x, y, cell_SIZE, cell_SIZE))
-                    window.blit(img_wall_up, (x, y, cell_SIZE, cell_SIZE))
+                    pygame.draw.rect(window, pygame.Color("red"), (x, y, cell_SIZE, cell_SIZE))
+                    # window.blit(img_wall_up, (x, y, cell_SIZE, cell_SIZE))
                 elif game_map[i][j] == 5:
                     key_h = pygame.Rect(x + cell_SIZE // 4, y + cell_SIZE // 4, cell_SIZE // 2, cell_SIZE // 2)
                     if player.hitbox.colliderect(key_h):
@@ -285,8 +275,11 @@ def run_game(level_number):
             bullet.draw(window)
 
 
-        pygame.draw.rect(window, (255, 0, 0), player.hitbox)
-        window.blit(img_player, player.hitbox)
+        if player.Is_moving() == True:
+            pygame.draw.rect(window, (0, 255, 0), player.hitbox)
+        else:
+            pygame.draw.rect(window, (255, 0, 0), player.hitbox)
+        # window.blit(img_player, player.hitbox)
 
         if trap_1_timer > 0:
             trap_1_timer -= 1

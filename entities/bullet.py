@@ -28,4 +28,4 @@ class Bullet:
             self.y += self.speed
 
     def draw(self, window):
-        pygame.draw.circle(window, pygame.Color("white"), (int(self.x), int(self.y)), self.r)
+        pygame.draw.circle(window, pygame.Color("red"), (int(self.x), int(self.y)), self.r)

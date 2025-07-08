@@ -7,9 +7,16 @@ from src.loading_screen import show_loading_screen
 
 levels_amount = 3
 
+
+
 def main():
     pygame.init()
     check = 1
+
+    pygame.mixer.music.load("D:\Игра ПУ\sounds\game_music.mp3")
+    pygame.mixer.music.set_volume(1)
+    pygame.mixer.music.play(-1)
+
     play = True
     while play:
         for event in pygame.event.get():
@@ -30,7 +37,7 @@ def main():
                     run_game_e()
                     show_final_msg()
         elif choice == "Настройки":
-            print("Настройки покане реализованы")
+            print("Настройки пока не реализованы")
         elif choice == "Выход":
             pygame.quit()
             return
