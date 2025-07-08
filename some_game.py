@@ -6,6 +6,7 @@ from engine.enviroment import Wall, Wood_Wall, TILE_SIZE
 from states.gameplay import initialization, game_loop
 import pickle
 import os
+
 def run_game_e():
 
     window = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))

@@ -3,6 +3,7 @@ from src.game_logic import run_game
 from src.menu import show_menu
 from some_game import run_game_e
 from src.final_msg import show_final_msg
+from src.loading_screen import show_loading_screen
 
 levels_amount = 3
 
@@ -20,6 +21,8 @@ def main():
                 if i <= 1:
                     if check == 1:
                         check = run_game(i + 1)
+                        if check == 1:
+                            show_loading_screen()
                     else:
                         pygame.quit()
                         return
