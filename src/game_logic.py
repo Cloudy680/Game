@@ -29,6 +29,10 @@ def run_game(level_number):
     except:
         print("Не удалось загрузить изображение")
 
+
+    frame = 0
+
+
     img_key = pygame.transform.scale(img_key, (cell_SIZE // 2, cell_SIZE // 2))
     # img_player = pygame.transform.scale(img_player, (cell_SIZE // 2, cell_SIZE // 2))
     img_key_door = pygame.transform.scale(img_key_door, (cell_SIZE, cell_SIZE))
@@ -107,17 +111,20 @@ def run_game(level_number):
                 if event.key == pygame.K_a or event.key == pygame.K_LEFT:
                     X_def = player.hitbox.x
                     key_left_pressed = True
+                    player.Change_moving(True)
                 elif event.key == pygame.K_d or event.key == pygame.K_RIGHT:
                     X_def = player.hitbox.x
                     key_right_pressed = True
+                    player.Change_moving(True)
                 elif event.key == pygame.K_w or event.key == pygame.K_UP:
                     Y_def = player.hitbox.y
                     key_up_pressed = True
+                    player.Change_moving(True)
                 elif event.key == pygame.K_s or event.key == pygame.K_DOWN:
                     Y_def = player.hitbox.y
                     key_down_pressed = True
+                    player.Change_moving(True)
                 timer = DELAY
-                player.Change_moving(True)
 
         window.fill(pygame.Color("black"))
 
@@ -275,11 +282,19 @@ def run_game(level_number):
             bullet.draw(window)
 
 
-        if player.Is_moving() == True:
-            pygame.draw.rect(window, (0, 255, 0), player.hitbox)
-        else:
-            pygame.draw.rect(window, (255, 0, 0), player.hitbox)
-        # window.blit(img_player, player.hitbox)
+        frame = (frame + 0.1) % 3
+
+        # if player.Is_moving() == True:
+        #     image = img_player_down.subsurface(0, 96 - 48 * int(frame), 28, 48)
+        #     pygame.draw.rect(window, (0, 255, 0), player.hitbox)
+        #     window.blit(image, player.hitbox)
+        # else:
+        #     image = img_player_right.subsurface(0, 96 - 48 * int(frame), 28, 48)
+        #     pygame.draw.rect(window, (255, 0, 0), player.hitbox)
+        #     window.blit(image, player.hitbox)
+        # # window.blit(img_player, player.hitbox)
+
+        player.draw(img_player_left, img_player_right, img_player_up, img_player_down, window, frame)
 
         if trap_1_timer > 0:
             trap_1_timer -= 1
