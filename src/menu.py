@@ -29,6 +29,7 @@ def show_menu():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 play = False
+                return
 
             if event.type == pygame.MOUSEMOTION:
                 mouse_pos = pygame.mouse.get_pos()
