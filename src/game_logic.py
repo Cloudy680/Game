@@ -42,6 +42,7 @@ def run_game(level_number):
 
     snd_key_door = pygame.mixer.Sound("sounds/sound_key_door_open.ogg")
     snd_plate = pygame.mixer.Sound("sounds/sound_plate.wav")
+    snd_trap_fire = pygame.mixer.Sound("sounds/trap_fire.ogg")
 
     #Вычислние размеров карты относительно окна приложения
     game_map = []
@@ -185,6 +186,7 @@ def run_game(level_number):
                     if trap_1 and trap_1_timer == 0:
                         plate_row, plate_col = find_plate_pos(game_map, 10)
                         direction = check_direction(i, j, plate_row, plate_col)
+                        snd_trap_fire.play()
                         Bullet(x + cell_SIZE // 2, y + cell_SIZE // 2, 10, direction, BULLET_SPEED)
                         trap_1 = False
                         trap_1_timer = BULLET_CD
@@ -193,6 +195,7 @@ def run_game(level_number):
                     if trap_2 and trap_2_timer == 0:
                         plate_row, plate_col = find_plate_pos(game_map, 12)
                         direction = check_direction(i, j, plate_row, plate_col)
+                        snd_trap_fire.play()
                         Bullet(x + cell_SIZE // 2, y + cell_SIZE // 2, 10, direction, BULLET_SPEED)
                         trap_2 = False
                         trap_2_timer = BULLET_CD
@@ -201,6 +204,7 @@ def run_game(level_number):
                     if trap_3 and trap_3_timer == 0:
                         plate_row, plate_col = find_plate_pos(game_map, 14)
                         direction = check_direction(i, j, plate_row, plate_col)
+                        snd_trap_fire.play()
                         Bullet(x + cell_SIZE // 2, y + cell_SIZE // 2, 10, direction, BULLET_SPEED)
                         trap_3 = False
                         trap_3_timer = BULLET_CD
