@@ -21,7 +21,6 @@ def run_game(level_number):
         img_key_door = pygame.image.load("images\key_door.png")
         img_floor = pygame.image.load("images\_another_floor.png")
         img_plate_act = pygame.image.load("images\_another_floor1.png")
-        # img_player = pygame.image.load("D:\Игра ПУ\images\player.png")
         img_player_left = pygame.image.load("images\player_left.png")
         img_player_right = pygame.image.load("images\player_right.png")
         img_player_up = pygame.image.load("images\player_up.png")
@@ -35,7 +34,6 @@ def run_game(level_number):
 
 
     img_key = pygame.transform.scale(img_key, (cell_SIZE // 2, cell_SIZE // 2))
-    # img_player = pygame.transform.scale(img_player, (cell_SIZE // 2, cell_SIZE // 2))
     img_key_door = pygame.transform.scale(img_key_door, (cell_SIZE, cell_SIZE))
     img_wall_up = pygame.transform.scale(img_wall_up, (cell_SIZE, cell_SIZE))
     img_floor = pygame.transform.scale(img_floor, (cell_SIZE, cell_SIZE))
@@ -46,7 +44,6 @@ def run_game(level_number):
     snd_plate = pygame.mixer.Sound("sounds/sound_plate.wav")
 
     #Вычислние размеров карты относительно окна приложения
-
     game_map = []
     game_map_WIDTH = WIDTH // cell_SIZE
     game_map_HEIGHT = HEIGHT // cell_SIZE
@@ -172,7 +169,6 @@ def run_game(level_number):
             for j in range(game_map_WIDTH):
                 x, y = j * cell_SIZE, i * cell_SIZE
                 if game_map[i][j] == 1:
-                    # pygame.draw.rect(window, pygame.Color("gray"), (x, y, cell_SIZE, cell_SIZE))
                     window.blit(img_wall_up, (x, y, cell_SIZE, cell_SIZE))
                 # elif game_map[i][j] == 2:
                 #     pygame.draw.rect(window, pygame.Color("green"), (x, y, cell_SIZE, cell_SIZE))
@@ -184,7 +180,6 @@ def run_game(level_number):
                         print(f"{player.Get_inv()} был израсходован")
                         player.Set_inv("")
                         game_map[i][j] = 9
-                    # pygame.draw.rect(window, pygame.Color("brown"), (x, y, cell_SIZE, cell_SIZE))
                     window.blit(img_key_door, (x, y, cell_SIZE, cell_SIZE))
                 elif game_map[i][j] == 10:
                     if trap_1 and trap_1_timer == 0:
@@ -194,7 +189,6 @@ def run_game(level_number):
                         trap_1 = False
                         trap_1_timer = BULLET_CD
                     pygame.draw.rect(window, pygame.Color("red"), (x, y, cell_SIZE, cell_SIZE))
-                    # window.blit(img_wall_up, (x, y, cell_SIZE, cell_SIZE))
                 elif game_map[i][j] == 12:
                     if trap_2 and trap_2_timer == 0:
                         plate_row, plate_col = find_plate_pos(game_map, 12)
@@ -203,7 +197,6 @@ def run_game(level_number):
                         trap_2 = False
                         trap_2_timer = BULLET_CD
                     pygame.draw.rect(window, pygame.Color("red"), (x, y, cell_SIZE, cell_SIZE))
-                    # window.blit(img_wall_up, (x, y, cell_SIZE, cell_SIZE))
                 elif game_map[i][j] == 14:
                     if trap_3 and trap_3_timer == 0:
                         plate_row, plate_col = find_plate_pos(game_map, 14)
@@ -212,15 +205,12 @@ def run_game(level_number):
                         trap_3 = False
                         trap_3_timer = BULLET_CD
                     pygame.draw.rect(window, pygame.Color("red"), (x, y, cell_SIZE, cell_SIZE))
-                    # window.blit(img_wall_up, (x, y, cell_SIZE, cell_SIZE))
                 elif game_map[i][j] == 5:
                     key_h = pygame.Rect(x + cell_SIZE // 4, y + cell_SIZE // 4, cell_SIZE // 2, cell_SIZE // 2)
                     if player.hitbox.colliderect(key_h):
                         player.Set_inv("Ключ")
                         print(f"Вы подобрали {player.Get_inv()}")
                         game_map[i][j] = 0
-                    # pygame.draw.rect(window, pygame.Color("yellow"), (x + cell_SIZE // 4, y + cell_SIZE // 4, cell_SIZE // 2, cell_SIZE // 2))
-                    # window.blit(img_floor, (x, y, cell_SIZE, cell_SIZE))
                     window.blit(img_key, (x + cell_SIZE // 4, y + cell_SIZE // 4, cell_SIZE // 2, cell_SIZE // 2))
                 elif game_map[i][j] == 6 or game_map[i][j] == 11 or game_map[i][j] == 13 or game_map[i][j] == 15:
                     plate = pygame.Rect(x, y, cell_SIZE, cell_SIZE)
@@ -228,24 +218,20 @@ def run_game(level_number):
                         if game_map[i][j] == 6 and not plate_6_played:
                             snd_plate.play()
                             plate_6_played = True
-                            # window.blit(img_plate_act, (x, y, cell_SIZE, cell_SIZE))
                             door_plate = True
                         if game_map[i][j] == 11 and not plate_11_played:
                             snd_plate.play()
                             trap_1 = True
                             plate_11_played = True
-                            # window.blit(img_plate_act, (x, y, cell_SIZE, cell_SIZE))
                         if game_map[i][j] == 13 and not plate_13_played:
                             snd_plate.play()
                             trap_2 = True
                             plate_13_played = True
-                            # window.blit(img_plate_act, (x, y, cell_SIZE, cell_SIZE))
                         if game_map[i][j] == 15 and not plate_15_played:
                             snd_plate.play()
                             trap_3 = True
                             plate_15_played = True
                         pygame.draw.rect(window, pygame.Color("khaki"), (x, y, cell_SIZE, cell_SIZE))
-                            # window.blit(img_plate_act, (x, y, cell_SIZE, cell_SIZE))
                     else:
                         if game_map[i][j] == 6:
                             plate_6_played = False
@@ -255,7 +241,6 @@ def run_game(level_number):
                             plate_13_played = False
                         elif game_map[i][j] == 15:
                             plate_15_played = False
-                        # window.blit(img_floor, (x, y, cell_SIZE, cell_SIZE))
                         pygame.draw.rect(window, pygame.Color("orange"), (x, y, cell_SIZE, cell_SIZE))
                 elif game_map[i][j] == 7:
                     if door_plate:
@@ -276,8 +261,6 @@ def run_game(level_number):
                     pygame.draw.rect(window, pygame.Color("pink"), (x, y, cell_SIZE, cell_SIZE))
                 elif game_map[i][j] == 18:
                     pygame.draw.rect(window, pygame.Color("violet"), (x, y, cell_SIZE, cell_SIZE))
-                # else:
-                #     window.blit(img_floor, (x, y, cell_SIZE, cell_SIZE))
                 # else:
                 #     pygame.draw.rect(window, pygame.Color("gray"), (x, y, cell_SIZE, cell_SIZE), 1)
 
@@ -308,16 +291,6 @@ def run_game(level_number):
 
 
         frame = (frame + 0.1) % 3
-
-        # if player.Is_moving() == True:
-        #     image = img_player_down.subsurface(0, 96 - 48 * int(frame), 28, 48)
-        #     pygame.draw.rect(window, (0, 255, 0), player.hitbox)
-        #     window.blit(image, player.hitbox)
-        # else:
-        #     image = img_player_right.subsurface(0, 96 - 48 * int(frame), 28, 48)
-        #     pygame.draw.rect(window, (255, 0, 0), player.hitbox)
-        #     window.blit(image, player.hitbox)
-        # # window.blit(img_player, player.hitbox)
 
         player.draw(img_player_left, img_player_right, img_player_up, img_player_down, window, frame)
 
