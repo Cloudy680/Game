@@ -85,11 +85,11 @@ class Player(Entity):
     def _load_animation_frames(self, direction):
         try:
             sprite_sheet = pygame.image.load(f'images/player_{direction}.png').convert_alpha()
-            frame_height = sprite_sheet.get_height() // 4
+            frame_height = sprite_sheet.get_height() // 3
             frame_width = sprite_sheet.get_width()
             
             frames = []
-            for i in range(4):
+            for i in range(3):
                 frame = sprite_sheet.subsurface(
                     pygame.Rect(0, i * frame_height, frame_width, frame_height)
                 )
@@ -183,6 +183,7 @@ class SmartEnemy(Entity):
         self.attacking_couldown = 60
         self.max_distance = max_dis
         self.path = []  # Список клеток пути [(col1, row1), (col2, row2), ...]
+        self.one_dying = False
 
         self.predying_sprite = pygame.image.load(f'images/goblin_predied.png').convert_alpha()
         self.predying_sprite = pygame.transform.scale(self.predying_sprite, (self.size * 1.1, self.size * 1.1))
@@ -191,6 +192,9 @@ class SmartEnemy(Entity):
 
         self.animations = self._load_animations()
         
+        self.sounds = {
+            'death': pygame.mixer.Sound('sounds/goblin_hit.mp3')
+        }
 
     def _load_animations(self):
         animations = {
@@ -233,6 +237,9 @@ class SmartEnemy(Entity):
                 elif self.attacking_couldown > 0:
                     self.attacking_couldown -= 1
             elif self.dying:
+                if not self.one_dying:
+                    self.sounds['death'].play()
+                    self.one_dying = True
                 if self.attacking_couldown <= 0:
                     self.condition = Condition.Dead
                     world[int(self.y // TILE_SIZE)][int(self.x // TILE_SIZE)] = 0

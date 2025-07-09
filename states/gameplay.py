@@ -126,6 +126,7 @@ def handle_enemy_collisions(player, enemies, world):
             if (player.activeitem.is_attack 
                     and player.activeitem.item_hitbox.colliderect(enemy.entity_hitbox)):
                 enemy.dying = True
+                
     return False
 
 def handle_item_collisions(player, item_list, world):

@@ -24,6 +24,7 @@ class Wood_Wall(Wall):
         self.max_HP = HP
 
         self.sounds = {
+            'hit': pygame.mixer.Sound('sounds/wood_hit.mp3'),
             'break': pygame.mixer.Sound('sounds/woodbroken.mp3')
         }
 
@@ -85,6 +86,8 @@ class Wood_Wall(Wall):
         if self.HP <= 0:
             self.sounds['break'].play()
             world[int(self.rect.y // TILE_SIZE)][int(self.rect.x // TILE_SIZE)] = 0
+        else:
+            self.sounds['hit'].play()
 
     def interact_with_player(self, player, world):
         if not self.is_broken():
