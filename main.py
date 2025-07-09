@@ -34,9 +34,10 @@ def main():
                         pygame.quit()
                         return
                 else:
-                    exit_game = run_game_e()
-                    if exit_game:
-                        show_final_msg()
+                    if check == 1:
+                        exit_game = run_game_e()
+                        if exit_game:
+                            show_final_msg()
         elif choice == "Настройки":
             print("Настройки пока не реализованы")
         elif choice == "Выход":

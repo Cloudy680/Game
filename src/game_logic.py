@@ -93,6 +93,11 @@ def run_game(level_number):
     trap_2_timer = 0
     trap_3_timer = 0
 
+    plate_6_played = False
+    plate_11_played = False
+    plate_13_played = False
+    plate_15_played = False
+
     state = "start"
 
     # Промежуточное меню
@@ -219,27 +224,37 @@ def run_game(level_number):
                     window.blit(img_key, (x + cell_SIZE // 4, y + cell_SIZE // 4, cell_SIZE // 2, cell_SIZE // 2))
                 elif game_map[i][j] == 6 or game_map[i][j] == 11 or game_map[i][j] == 13 or game_map[i][j] == 15:
                     plate = pygame.Rect(x, y, cell_SIZE, cell_SIZE)
-                    if player.hitbox.colliderect(plate) and game_map[i][j] == 6:
-                        snd_plate.play(1)
+                    if player.hitbox.colliderect(plate):
+                        if game_map[i][j] == 6 and not plate_6_played:
+                            snd_plate.play()
+                            plate_6_played = True
+                            # window.blit(img_plate_act, (x, y, cell_SIZE, cell_SIZE))
+                            door_plate = True
+                        if game_map[i][j] == 11 and not plate_11_played:
+                            snd_plate.play()
+                            trap_1 = True
+                            plate_11_played = True
+                            # window.blit(img_plate_act, (x, y, cell_SIZE, cell_SIZE))
+                        if game_map[i][j] == 13 and not plate_13_played:
+                            snd_plate.play()
+                            trap_2 = True
+                            plate_13_played = True
+                            # window.blit(img_plate_act, (x, y, cell_SIZE, cell_SIZE))
+                        if game_map[i][j] == 15 and not plate_15_played:
+                            snd_plate.play()
+                            trap_3 = True
+                            plate_15_played = True
                         pygame.draw.rect(window, pygame.Color("khaki"), (x, y, cell_SIZE, cell_SIZE))
-                        # window.blit(img_plate_act, (x, y, cell_SIZE, cell_SIZE))
-                        door_plate = True
-                    elif player.hitbox.colliderect(plate) and game_map[i][j] == 11:
-                        trap_1 = True
-                        snd_plate.play(1)
-                        pygame.draw.rect(window, pygame.Color("khaki"), (x, y, cell_SIZE, cell_SIZE))
-                        # window.blit(img_plate_act, (x, y, cell_SIZE, cell_SIZE))
-                    elif player.hitbox.colliderect(plate) and game_map[i][j] == 13:
-                        trap_2 = True
-                        snd_plate.play(1)
-                        pygame.draw.rect(window, pygame.Color("khaki"), (x, y, cell_SIZE, cell_SIZE))
-                        # window.blit(img_plate_act, (x, y, cell_SIZE, cell_SIZE))
-                    elif player.hitbox.colliderect(plate) and game_map[i][j] == 15:
-                        trap_3 = True
-                        snd_plate.play(1)
-                        pygame.draw.rect(window, pygame.Color("khaki"), (x, y, cell_SIZE, cell_SIZE))
-                        # window.blit(img_plate_act, (x, y, cell_SIZE, cell_SIZE))
+                            # window.blit(img_plate_act, (x, y, cell_SIZE, cell_SIZE))
                     else:
+                        if game_map[i][j] == 6:
+                            plate_6_played = False
+                        elif game_map[i][j] == 11:
+                            plate_11_played = False
+                        elif game_map[i][j] == 13:
+                            plate_13_played = False
+                        elif game_map[i][j] == 15:
+                            plate_15_played = False
                         # window.blit(img_floor, (x, y, cell_SIZE, cell_SIZE))
                         pygame.draw.rect(window, pygame.Color("orange"), (x, y, cell_SIZE, cell_SIZE))
                 elif game_map[i][j] == 7:
