@@ -31,7 +31,7 @@ def run_game_e():
                 play = False
 
         if state == 'initialization':
-            world, wall_list, item_list, enemy, player, state = initialization()
+            world, wall_list, item_list, enemy, player, state, EXIT_X, EXIT_Y = initialization()
 
         elif state == 'playing':
 
@@ -39,10 +39,13 @@ def run_game_e():
                 window, player, world, wall_list, item_list, enemy,
                 EXIT_X, EXIT_Y, timer, initial_timer, state
             )
+        elif state == 'stop':
+            play = False
 
 
 
         pygame.display.update()
         clock.tick(FPS)
 
-    return
+
+    
