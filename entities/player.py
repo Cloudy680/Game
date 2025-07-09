@@ -8,9 +8,15 @@ class Player_M:
         self.collision = False
         self.inv = ""
         self.moving = False
+        self.direction = "DOWN"
 
     # Движение персонажа по оси OX
     def X_move(self, timer : int, cell_SIZE, game_map, X_def, speed) -> int:
+        if speed < 0:
+            self.direction = "LEFT"
+        elif speed > 0:
+            self.direction = "RIGHT"
+        self.moving = True
         timer -= 1
         if timer < 0:
             for i in range(len(game_map)):
@@ -31,6 +37,11 @@ class Player_M:
 
     # Движение персонажа по оси OY
     def Y_move(self, timer: int, cell_SIZE, game_map, Y_def, speed) -> int:
+        if speed < 0:
+            self.direction = "UP"
+        elif speed > 0:
+            self.direction = "DOWN"
+        self.moving = True
         timer -= 1
         if timer < 0:
             collision = False
@@ -58,3 +69,23 @@ class Player_M:
         return self.moving
     def Change_moving(self, moving):
         self.moving = moving
+        if moving == False:
+            self.direction = "DOWN"
+
+    def draw(self, img_player_left, img_player_right, img_player_up, img_player_down, window, frame):
+        if self.moving == False:
+            image = img_player_down.subsurface(0, 0, 28, 48)
+            window.blit(image, self.hitbox)
+        elif self.moving == True and self.direction == "RIGHT":
+            image = img_player_right.subsurface(0, 96 - 48 * int(frame), 28, 48)
+            window.blit(image, self.hitbox)
+        elif self.moving == True and self.direction == "LEFT":
+            image = img_player_left.subsurface(0, 96 - 48 * int(frame), 28, 48)
+            window.blit(image, self.hitbox)
+        elif self.moving == True and self.direction == "DOWN":
+            image = img_player_down.subsurface(0, 96 - 48 * int(frame), 28, 48)
+            window.blit(image, self.hitbox)
+        elif self.moving == True and self.direction == "UP":
+            image = img_player_up.subsurface(0, 96 - 48 * int(frame), 28, 48)
+            window.blit(image, self.hitbox)
+
