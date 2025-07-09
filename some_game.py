@@ -40,12 +40,12 @@ def run_game_e():
                 EXIT_X, EXIT_Y, timer, initial_timer, state
             )
         elif state == 'stop':
+            return True
             play = False
 
 
 
         pygame.display.update()
         clock.tick(FPS)
+    return False
 
-
-    

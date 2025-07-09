@@ -62,10 +62,10 @@ def initialization():
             elif world[row][col] == 21:
                 item_list.append(Sword(col * TILE_SIZE + (TILE_SIZE - PLAYER_HIT) // 2, row * TILE_SIZE + (TILE_SIZE - PLAYER_HIT) // 2))
     if not have_player:
-        print("dff")
+        # print("dff")
         player = Player(spawn_x, spawn_y)
         
-    print(player.inventory.get_items())
+    # print(player.inventory.get_items())
     state = 'playing'
 
     return world, wall_list, item_list, enemy, player, state, EXIT_X, EXIT_Y
@@ -80,10 +80,10 @@ def draw_world(world, window):
         for col in range(len(world[0])):
             x, y = col * TILE_SIZE, row * TILE_SIZE
 
-            if world[row][col] == 2:
+            # if world[row][col] == 2:
+            #     pygame.draw.rect(window, pygame.Color(''), (x, y, TILE_SIZE, TILE_SIZE))
+            if world[row][col] == 3:
                 pygame.draw.rect(window, pygame.Color('green'), (x, y, TILE_SIZE, TILE_SIZE))
-            elif world[row][col] == 3:
-                pygame.draw.rect(window, pygame.Color('purple'), (x, y, TILE_SIZE, TILE_SIZE))
 
 def render_scene(window, world, walls, item_list, enemies, player):
     window.fill(pygame.Color('black'))
@@ -126,6 +126,7 @@ def handle_enemy_collisions(player, enemies, world):
             if (player.activeitem.is_attack 
                     and player.activeitem.item_hitbox.colliderect(enemy.entity_hitbox)):
                 enemy.dying = True
+                
     return False
 
 def handle_item_collisions(player, item_list, world):
