@@ -16,16 +16,16 @@ def run_game(level_number):
 
 
     try:
-        img_key = pygame.image.load("D:\Игра ПУ\images\key.png")
-        img_key_door = pygame.image.load("D:\Игра ПУ\images\key_door.png")
-        img_floor = pygame.image.load("D:\Игра ПУ\images\_another_floor.png")
-        img_plate_act = pygame.image.load("D:\Игра ПУ\images\_another_floor1.png")
+        img_key = pygame.image.load("images\key.png")
+        img_key_door = pygame.image.load("images\key_door.png")
+        img_floor = pygame.image.load("images\_another_floor.png")
+        img_plate_act = pygame.image.load("images\_another_floor1.png")
         # img_player = pygame.image.load("D:\Игра ПУ\images\player.png")
-        img_player_left = pygame.image.load("D:\Игра ПУ\images\player_left.png")
-        img_player_right = pygame.image.load("D:\Игра ПУ\images\player_right.png")
-        img_player_up = pygame.image.load("D:\Игра ПУ\images\player_up.png")
-        img_player_down = pygame.image.load("D:\Игра ПУ\images\player_down.png")
-        img_wall_up = pygame.image.load("D:\Игра ПУ\images\wall_up.png")
+        img_player_left = pygame.image.load("images\player_left.png")
+        img_player_right = pygame.image.load("images\player_right.png")
+        img_player_up = pygame.image.load("images\player_up.png")
+        img_player_down = pygame.image.load("images\player_down.png")
+        img_wall_up = pygame.image.load("images\wall_up.png")
     except:
         print("Не удалось загрузить изображение")
 

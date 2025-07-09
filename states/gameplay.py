@@ -68,7 +68,7 @@ def initialization():
     print(player.inventory.get_items())
     state = 'playing'
 
-    return world, wall_list, item_list, enemy, player, state
+    return world, wall_list, item_list, enemy, player, state, EXIT_X, EXIT_Y
 
 
 
@@ -85,14 +85,19 @@ def draw_world(world, window):
             elif world[row][col] == 3:
                 pygame.draw.rect(window, pygame.Color('purple'), (x, y, TILE_SIZE, TILE_SIZE))
 
-def render_scene(window, world, walls, enemies, player):
+def render_scene(window, world, walls, item_list, enemies, player):
     window.fill(pygame.Color('black'))
     draw_world(world, window)
     for wall in walls:
         wall.draw(window)
     for enemy in enemies:
         enemy.draw(window)
+    for item in item_list:
+        item.draw(window)
     player.draw(window)
+    FONT = pygame.font.SysFont(None, 45)
+    level = FONT.render(f"Уровень: " + str(player.player_level + 2), True, (255, 255, 255), 1)
+    window.blit(level, (30, 20))
 
 def move_right(who, world):
     who.move(who.x + TILE_SIZE, who.y, world)
@@ -108,20 +113,19 @@ def move_down(who, world):
 
 def handle_wall_collisions(player, wall_list, world):
     for wall in wall_list:
-        if not isinstance(wall, Wood_Wall):
             wall.interact_with_player(player, world)
 
 
-def handle_enemy_collisions(player, enemies):
+def handle_enemy_collisions(player, enemies, world):
     for enemy in enemies:
         if player.entity_hitbox.colliderect(enemy.entity_hitbox):
-            if enemy.condition == Condition.Alive:
+            if not enemy.dying and enemy.condition == Condition.Alive:
                 player.condition = Condition.Dead
                 return True  # Игра окончена
         if player.activeitem:
             if (player.activeitem.is_attack 
                     and player.activeitem.item_hitbox.colliderect(enemy.entity_hitbox)):
-                enemy.condition = Condition.Dead
+                enemy.dying = True
     return False
 
 def handle_item_collisions(player, item_list, world):
@@ -140,6 +144,24 @@ def game_loop(window, player, world, wall_list, item_list, enemy, EXIT_X, EXIT_Y
     if timer > 0:
         timer -= 1
 
+    
+
+    # Обновление состояний
+    player.update()
+    for enem in enemy:
+        enem.update(player, world)
+
+    
+
+    # Отрисовка
+    render_scene(window, world, wall_list, item_list, enemy, player)
+    
+    
+    handle_wall_collisions(player, wall_list, world)
+    if handle_enemy_collisions(player, enemy, world):
+        player.condition = Condition.Dead
+    handle_item_collisions(player, item_list, world)
+    
     if keys[pygame.K_RIGHT] and timer == 0:
         move_right(player, world)
         timer = 30
@@ -153,28 +175,10 @@ def game_loop(window, player, world, wall_list, item_list, enemy, EXIT_X, EXIT_Y
         move_down(player, world)
         timer = 30
 
-    # Обновление состояний
-    player.update()
-    for enem in enemy:
-        enem.update(player, world)
-
-    # Отрисовка
-    render_scene(window, world, wall_list, enemy, player)
-    for item in item_list:
-        item.draw(window)
-    
-    handle_wall_collisions(player, wall_list, world)
-    if handle_enemy_collisions(player, enemy):
-        player.condition = Condition.Dead
-    handle_item_collisions(player, item_list, world)
-
 
     # Проверка условий завершения уровня
     if EXIT_X == player.x and EXIT_Y == player.y:
-        state = 'initialization'
-        player.player_level += 1
-        with open(Player_Save, 'wb') as player_output:
-            pickle.dump(player, player_output)
+        state = 'stop'
         initial_timer = 5
         wall_list.clear()
     elif player.condition == Condition.Dead:

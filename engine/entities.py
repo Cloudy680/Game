@@ -4,8 +4,7 @@ from enum import Enum, auto
 import math
 from .items import Sword, EntityPos
 from random import choice
-from config import TILE_SIZE
-PLAYER_HIT = 20
+from config import TILE_SIZE, PLAYER_HIT, enemy_hit
 
 class Condition(Enum):
     Alive = 1
@@ -30,21 +29,21 @@ class Inventory:
         self.inventory.append(item)
     
     def draw(self, window):
-        inventory_x = 10  # Позиция X
-        inventory_y = 10  # Позиция Y
+        inventory_x = 30  # Позиция X
+        inventory_y = 680  # Позиция Y
         item_spacing = 40  # Расстояние между предметами
     
         # Фон инвентаря (опционально)
     
         # Текст "Инвентарь"
-        font = pygame.font.SysFont('Arial', 20)
-        text = font.render(f"Инвентарь:", True, pygame.Color('white'))
+        font = pygame.font.SysFont(None, 45)
+        text = font.render(f"Инвентарь:", True, (255, 255, 255), 1)
         window.blit(text, (inventory_x, inventory_y))
     
         # Отрисовка всех предметов
         for i, item in enumerate(self.inventory):
-            item_text = font.render(f"{i+1}. {item.name}", True, pygame.Color('white'))
-            window.blit(item_text, (inventory_x, inventory_y + 30 + i * item_spacing))
+            item_text = font.render(f"{item.name}", True, pygame.Color('white'))
+            window.blit(item_text, (inventory_x + 200 + i * item_spacing, inventory_y))
         
             # Если у предмета есть иконка (например, в отдельном классе)
             if hasattr(item, 'icon'):
@@ -72,20 +71,50 @@ class Player(Entity):
         self.player_level = 1
         self.interacting = False
 
+        self.animations = self._load_animations()
+
+    def _load_animations(self):
+        animations = {
+            EntityPos.RIGHT_POS: self._load_animation_frames('right'),
+            EntityPos.LEFT_POS: self._load_animation_frames('left'),
+            EntityPos.TOP_POS: self._load_animation_frames('up'),
+            EntityPos.BOTTOM_POS: self._load_animation_frames('down')
+        }
+        return animations
+
+    def _load_animation_frames(self, direction):
+        try:
+            sprite_sheet = pygame.image.load(f'images/player_{direction}.png').convert_alpha()
+            frame_height = sprite_sheet.get_height() // 4
+            frame_width = sprite_sheet.get_width()
+            
+            frames = []
+            for i in range(4):
+                frame = sprite_sheet.subsurface(
+                    pygame.Rect(0, i * frame_height, frame_width, frame_height)
+                )
+                scaled_frame = pygame.transform.scale(frame, (self.size, self.size))
+                frames.append(scaled_frame)
+            return frames
+        except Exception as e:
+            print(f"Error loading {direction} animation: {e}")
+            return None
+
     def move(self, new_XP, new_YP, world, speed = 25):
         self.moving_speed = speed
         self.where_X, self.where_Y = new_XP, new_YP
         self.start_X, self.start_Y = self.x, self.y
 
         next_posx, next_posy = int(self.where_X // TILE_SIZE), int(self.where_Y // TILE_SIZE)
-        print(next_posx, " ", next_posy)
         if world[next_posy][next_posx] >= 10 and world[next_posy][next_posx] <= 20:
+            have_item = False
             for item in self.inventory.get_items():
                 if hasattr(item, 'damage'):
                     self.activeitem = item
                     self.interacting = True
-                else:
-                    self.moving = True
+                    have_item = True
+            if not have_item:
+                self.moving = True
         else:
             self.moving = True
 
@@ -106,7 +135,10 @@ class Player(Entity):
          self.interacting = bol
 
     def draw(self, window):
-        pygame.draw.rect(window, pygame.Color('yellow'), self.entity_hitbox)
+        if self.moving:
+            window.blit(self.animations[self.get_pos()][1], self.entity_hitbox)
+        else:
+            window.blit(self.animations[self.get_pos()][0], self.entity_hitbox)
         if self.activeitem:
             self.activeitem.draw(window)
         self.inventory.draw(window)
@@ -137,7 +169,7 @@ class Player(Entity):
 
 class SmartEnemy(Entity):
     def __init__(self, x, y, max_dis = 5):
-        super().__init__(x, y, size=PLAYER_HIT, hp=30, attack=5)
+        super().__init__(x, y, size=enemy_hit, hp=30, attack=5)
         self.moving_speed = 35
         self.where_X = x
         self.where_Y = y
@@ -147,10 +179,43 @@ class SmartEnemy(Entity):
         self.moving = False
         self.move_delay = 0
         self.attacking = False
+        self.dying = False
         self.attacking_couldown = 60
         self.max_distance = max_dis
         self.path = []  # Список клеток пути [(col1, row1), (col2, row2), ...]
+
+        self.predying_sprite = pygame.image.load(f'images/goblin_predied.png').convert_alpha()
+        self.predying_sprite = pygame.transform.scale(self.predying_sprite, (self.size * 1.1, self.size * 1.1))
+        self.dead_sprite = pygame.image.load(f'images/goblin_died.png').convert_alpha()
+        self.dead_sprite = pygame.transform.scale(self.dead_sprite, (self.size * 1.1, self.size * 1.1))
+
+        self.animations = self._load_animations()
         
+
+    def _load_animations(self):
+        animations = {
+            EntityPos.RIGHT_POS: self._load_animation_frames('right'),
+            EntityPos.LEFT_POS: self._load_animation_frames('left'),
+            EntityPos.TOP_POS: self._load_animation_frames('up'),
+            EntityPos.BOTTOM_POS: self._load_animation_frames('down')
+        }
+        return animations
+
+    def _load_animation_frames(self, direction):
+        try:
+            stay_sprite = pygame.image.load(f'images/goblin_{direction}.png').convert_alpha()
+            stay_sprite = pygame.transform.scale(stay_sprite, (self.size * 1.1, self.size * 1.1))
+            walk_sprite = pygame.image.load(f'images/goblin_{direction}_walk.png').convert_alpha()
+            walk_sprite = pygame.transform.scale(walk_sprite, (self.size * 1.1, self.size * 1.1))
+            
+            frames = []
+            frames.append(stay_sprite)
+            frames.append(walk_sprite)
+            return frames
+        except Exception as e:
+            print(f"Error loading {direction} animation: {e}")
+            return None
+
     def move(self, new_XP, new_YP, speed = 25):
         self.moving_speed = speed
         self.moving = True
@@ -164,9 +229,19 @@ class SmartEnemy(Entity):
                     self.moving_speed = 15
                     self.attacking = False
                     self.moving = True
-                if self.attacking_couldown > 0:
+                    self.attacking_couldown = 60
+                elif self.attacking_couldown > 0:
                     self.attacking_couldown -= 1
+            elif self.dying:
+                if self.attacking_couldown <= 0:
+                    self.condition = Condition.Dead
+                    world[int(self.y // TILE_SIZE)][int(self.x // TILE_SIZE)] = 0
+                else:
+                    self.attacking_couldown -= 1
+                
             elif self.moving and self.move_delay == 0:
+                if self.x // TILE_SIZE == self.where_X // TILE_SIZE and self.y // TILE_SIZE == self.where_Y // TILE_SIZE:
+                    world[self.where_Y // TILE_SIZE][self.where_X // TILE_SIZE], world[self.start_Y // TILE_SIZE][self.start_X // TILE_SIZE] = 11, 0
                 # Продолжаем текущее движение
                 self.part_move += 1
                 t = self.part_move / self.moving_speed
@@ -191,17 +266,25 @@ class SmartEnemy(Entity):
         
                 if self.path:
                     next_col, next_row = self.path.pop(0)
-                    self.where_X = next_col * TILE_SIZE + (TILE_SIZE - PLAYER_HIT) // 2
-                    self.where_Y = next_row * TILE_SIZE + (TILE_SIZE - PLAYER_HIT) // 2
+                    self.where_X = next_col * TILE_SIZE + (TILE_SIZE - self.size) // 2
+                    self.where_Y = next_row * TILE_SIZE + (TILE_SIZE - self.size) // 2
                     self.start_X, self.start_Y = self.x, self.y
                     self.moving = True
-                    world[self.where_Y // TILE_SIZE][self.where_X // TILE_SIZE], world[self.start_Y // TILE_SIZE][self.start_X // TILE_SIZE] = 11, 0
-                
+                    world[next_row][next_col] == 11
                 
         else:
             world[self.where_Y // TILE_SIZE][self.where_X // TILE_SIZE] = 0
             
     
+    def get_pos(self):
+        if self.start_X < self.where_X:
+            return EntityPos.RIGHT_POS
+        elif self.start_X > self.where_X:
+            return EntityPos.LEFT_POS
+        elif self.start_Y > self.where_Y:
+            return EntityPos.TOP_POS
+        return EntityPos.BOTTOM_POS
+
     def is_player_moved(self, player):
         if not self.path:
             return True
@@ -274,6 +357,15 @@ class SmartEnemy(Entity):
         return []  # Путь не найден
     
     def draw(self, window):
-        pygame.draw.rect(window, pygame.Color('green'), self.entity_hitbox)
         if self.condition == Condition.Dead:
-            pygame.draw.circle(window, pygame.Color('red'), (self.entity_hitbox.x + PLAYER_HIT / 2, self.entity_hitbox.y + PLAYER_HIT / 2), 6)
+            window.blit(self.dead_sprite, self.entity_hitbox)
+            
+        elif self.dying:
+            window.blit(self.predying_sprite, self.entity_hitbox)
+            pygame.draw.circle(window, pygame.Color('red'), (self.entity_hitbox.x + enemy_hit / 2, self.entity_hitbox.y + enemy_hit / 2), 3)
+        
+        elif self.moving:
+            window.blit(self.animations[self.get_pos()][1], self.entity_hitbox)
+        else:
+            window.blit(self.animations[self.get_pos()][0], self.entity_hitbox)
+        

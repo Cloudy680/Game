@@ -13,7 +13,7 @@ def main():
     pygame.init()
     check = 1
 
-    pygame.mixer.music.load("D:\Игра ПУ\sounds\game_music.mp3")
+    pygame.mixer.music.load("sounds\game_music.mp3")
     pygame.mixer.music.set_volume(1)
     pygame.mixer.music.play(-1)
 
@@ -34,8 +34,9 @@ def main():
                         pygame.quit()
                         return
                 else:
-                    run_game_e()
-                    show_final_msg()
+                    exit_game = run_game_e()
+                    if exit_game:
+                        show_final_msg()
         elif choice == "Настройки":
             print("Настройки пока не реализованы")
         elif choice == "Выход":
