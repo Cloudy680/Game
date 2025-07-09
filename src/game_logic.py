@@ -16,16 +16,16 @@ def run_game(level_number):
 
 
     try:
-        img_key = pygame.image.load("D:\Игра ПУ\images\key.png")
-        img_key_door = pygame.image.load("D:\Игра ПУ\images\key_door.png")
-        img_floor = pygame.image.load("D:\Игра ПУ\images\_another_floor.png")
-        img_plate_act = pygame.image.load("D:\Игра ПУ\images\_another_floor1.png")
+        img_key = pygame.image.load("images/key.png")
+        img_key_door = pygame.image.load("images/key_door.png")
+        img_floor = pygame.image.load("images/_another_floor.png")
+        img_plate_act = pygame.image.load("images/_another_floor1.png")
         # img_player = pygame.image.load("D:\Игра ПУ\images\player.png")
-        img_player_left = pygame.image.load("D:\Игра ПУ\images\player_left.png")
-        img_player_right = pygame.image.load("D:\Игра ПУ\images\player_right.png")
-        img_player_up = pygame.image.load("D:\Игра ПУ\images\player_up.png")
-        img_player_down = pygame.image.load("D:\Игра ПУ\images\player_down.png")
-        img_wall_up = pygame.image.load("D:\Игра ПУ\images\wall_up.png")
+        img_player_left = pygame.image.load("images/player_left.png")
+        img_player_right = pygame.image.load("images/player_right.png")
+        img_player_up = pygame.image.load("images/player_up.png")
+        img_player_down = pygame.image.load("images/player_down.png")
+        img_wall_up = pygame.image.load("images/wall_up.png")
     except:
         print("Не удалось загрузить изображение")
 
@@ -39,6 +39,10 @@ def run_game(level_number):
     img_wall_up = pygame.transform.scale(img_wall_up, (cell_SIZE, cell_SIZE))
     img_floor = pygame.transform.scale(img_floor, (cell_SIZE, cell_SIZE))
     img_plate_act = pygame.transform.scale(img_plate_act, (cell_SIZE, cell_SIZE))
+
+
+    snd_key_door = pygame.mixer.Sound("sounds/sound_key_door_open.ogg")
+    snd_plate = pygame.mixer.Sound("sounds/sound_plate.wav")
 
     #Вычислние размеров карты относительно окна приложения
 
@@ -169,6 +173,7 @@ def run_game(level_number):
                 elif game_map[i][j] == 3:
                     door = pygame.Rect(j * cell_SIZE, i * cell_SIZE, cell_SIZE, cell_SIZE)
                     if player.hitbox.colliderect(door) and player.Get_inv() == "Ключ":
+                        snd_key_door.play()
                         print("Вы открыли дверь")
                         print(f"{player.Get_inv()} был израсходован")
                         player.Set_inv("")
@@ -214,19 +219,23 @@ def run_game(level_number):
                 elif game_map[i][j] == 6 or game_map[i][j] == 11 or game_map[i][j] == 13 or game_map[i][j] == 15:
                     plate = pygame.Rect(x, y, cell_SIZE, cell_SIZE)
                     if player.hitbox.colliderect(plate) and game_map[i][j] == 6:
+                        snd_plate.play(1)
                         pygame.draw.rect(window, pygame.Color("khaki"), (x, y, cell_SIZE, cell_SIZE))
                         # window.blit(img_plate_act, (x, y, cell_SIZE, cell_SIZE))
                         door_plate = True
                     elif player.hitbox.colliderect(plate) and game_map[i][j] == 11:
                         trap_1 = True
+                        snd_plate.play(1)
                         pygame.draw.rect(window, pygame.Color("khaki"), (x, y, cell_SIZE, cell_SIZE))
                         # window.blit(img_plate_act, (x, y, cell_SIZE, cell_SIZE))
                     elif player.hitbox.colliderect(plate) and game_map[i][j] == 13:
                         trap_2 = True
+                        snd_plate.play(1)
                         pygame.draw.rect(window, pygame.Color("khaki"), (x, y, cell_SIZE, cell_SIZE))
                         # window.blit(img_plate_act, (x, y, cell_SIZE, cell_SIZE))
                     elif player.hitbox.colliderect(plate) and game_map[i][j] == 15:
                         trap_3 = True
+                        snd_plate.play(1)
                         pygame.draw.rect(window, pygame.Color("khaki"), (x, y, cell_SIZE, cell_SIZE))
                         # window.blit(img_plate_act, (x, y, cell_SIZE, cell_SIZE))
                     else:
@@ -243,7 +252,7 @@ def run_game(level_number):
                     # pygame.draw.rect(window, pygame.Color("darkgreen"), (x, y, cell_SIZE, cell_SIZE))
                     # window.blit(img_floor, (x, y, cell_SIZE, cell_SIZE))
                 elif game_map[i][j] == 16:
-                    pygame.draw.rect(window, pygame.Color("purple"), (x, y, cell_SIZE, cell_SIZE))
+                    pygame.draw.rect(window, pygame.Color("green"), (x, y, cell_SIZE, cell_SIZE))
                     exit = pygame.Rect(x + cell_SIZE // 4, y + cell_SIZE // 4, cell_SIZE // 2, cell_SIZE // 2)
                     if player.hitbox.colliderect(exit):
                         state = "win"

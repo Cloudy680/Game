@@ -69,8 +69,8 @@ class Player_M:
         return self.moving
     def Change_moving(self, moving):
         self.moving = moving
-        if moving == False:
-            self.direction = "DOWN"
+        # if moving == False:
+        #     self.direction = "DOWN"
 
     def draw(self, img_player_left, img_player_right, img_player_up, img_player_down, window, frame):
         if self.moving == False:
